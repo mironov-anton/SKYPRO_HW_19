@@ -2,13 +2,15 @@ from flask_restx import Resource, Namespace
 
 from dao.model.genre import GenreSchema
 from implemented import genre_service
+from tools.auth import auth_required
 
 genre_ns = Namespace('genres')
 
 
 @genre_ns.route('/')
 class GenresView(Resource):
-    def get(self):
+    @auth_required
+    def get(self, token_data):
         rs = genre_service.get_all()
         res = GenreSchema(many=True).dump(rs)
         return res, 200
@@ -16,7 +18,8 @@ class GenresView(Resource):
 
 @genre_ns.route('/<int:rid>')
 class GenreView(Resource):
-    def get(self, rid):
+    @auth_required
+    def get(self, rid, token_data):
         r = genre_service.get_one(rid)
         sm_d = GenreSchema().dump(r)
         return sm_d, 200
