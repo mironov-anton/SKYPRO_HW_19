@@ -1,5 +1,7 @@
+import sqlalchemy.exc
+
 from dao.model.user import User
-from exceptions import IncorrectData
+from exceptions import IncorrectData, DuplicateError
 
 
 class UserDAO:
@@ -11,16 +13,19 @@ class UserDAO:
         return self.session.query(User).get(uid)
 
     def get_by_username(self, username: str):
-        return self.session.query(User).filter(username=username).one_or_none()
+        return self.session.query(User).filter(User.username == username).one_or_none()
 
     def get_all(self):
         return self.session.query(User).all()
 
     def create(self, user_d):
-        ent = User(**user_d)
-        self.session.add(ent)
-        self.session.commit()
-        return ent
+        try:
+            ent = User(**user_d)
+            self.session.add(ent)
+            self.session.commit()
+            return ent
+        except sqlalchemy.exc.IntegrityError:
+            raise DuplicateError
 
     def delete(self, uid):
         user = self.get_one(uid)
