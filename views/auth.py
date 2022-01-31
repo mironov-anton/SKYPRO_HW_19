@@ -1,12 +1,8 @@
 from flask import request, abort
 from flask_restx import Resource, Namespace
 
-# from dao.model.genre import GenreSchema
-from exceptions import DuplicateError
 from implemented import user_service
-# from tools.auth import auth_required
 from marshmallow import Schema, fields, ValidationError
-from werkzeug.exceptions import BadRequest
 
 from tools.jwt_token import JwtSchema, JwtToken
 from tools.security import compare_passwords
@@ -17,6 +13,7 @@ auth_ns = Namespace('auth')
 class LoginValidator(Schema):
     username = fields.Str(required=True)
     password = fields.Str(required=True)
+    role = fields.Str()
 
 
 class RefreshTokenValidator(Schema):

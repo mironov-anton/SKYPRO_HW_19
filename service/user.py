@@ -22,7 +22,8 @@ class UserService:
             "role": role,
         })
 
-    def update_password(self, username: str, password_hash: str):
+    def update_password(self, username: str, password: str):
+        password_hash = get_password_hash(password)
         return self.dao.update_password(username, password_hash)
 
     def update_role(self, username: str, role: str):
